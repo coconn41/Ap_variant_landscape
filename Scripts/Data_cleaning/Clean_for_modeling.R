@@ -1,16 +1,26 @@
 library(tidyverse)
 library(readxl)
 library(sf)
-
+remove_private = F
 #####
 # Load location data and metrics
 #####
+if(remove_private==T){
 Location_table = read.csv(paste0(getwd(),'/Data/Metric_locations/Loc_metric_table.csv'))[,-1] %>%
   rename(County = loc_county,
          Site = loc_name) %>%
   mutate(latitude = ifelse(Site == "Trevor Park",40.952928,latitude),
-         longitude = ifelse(Site == "Trevor Park",-73.897142,longitude))
-
+         longitude = ifelse(Site == "Trevor Park",-73.897142,longitude))}
+if(remove_private==F){
+  Location_table = read.csv(paste0(getwd(),'/Data/Metric_locations/Loc_metric_table_w_private.csv'))[,-1] %>%
+    rename(County = loc_county,
+           Site = loc_name) %>%
+    mutate(latitude = ifelse(Site == "Trevor Park",40.952928,latitude),
+           longitude = ifelse(Site == "Trevor Park",-73.897142,longitude))}
+#####
+# Calculate closest UAs
+#####
+source(paste0(getwd(),'/Scripts/Analysis/Closest_UAs.R'))
 #####
 # Load landscape level SCR WMU values
 #####
@@ -314,7 +324,7 @@ Testing_results = fulldf %>%
   summarize(ha = sum(ha,na.rm=T),
             v1 = sum(v1,na.rm=T),
             tot_tested = n())
-
+if(remove_private==T){
 LT_private_prop <- read_excel("Data/TL_data/Location_table_6_3.xlsx") %>%
   rename(Site = loc_name,
          County = loc_county) %>%
@@ -324,8 +334,6 @@ LT_private_prop <- read_excel("Data/TL_data/Location_table_6_3.xlsx") %>%
   mutate(Private = ifelse(loc_public=="Private property",1,
                           ifelse(grepl('private', loc_public),1,
                                  ifelse(grepl('Private', loc_public),1,0))))
-  
-
 Regression_df = left_join(Long_clean,Testing_results) %>%
   mutate(t_coll_ind = ifelse(is.na(tot_collected)==T,1,0),
          t_test_ind = ifelse(is.na(tot_tested)==T,1,0)) %>%
@@ -336,4 +344,19 @@ Regression_df = left_join(Long_clean,Testing_results) %>%
   filter(Private==0) %>%
   left_join(Location_table)
 write.csv(Regression_df,
-          file = paste0(getwd(),'/Data/Regression_df/Regression_df.csv'))
+          file = paste0(getwd(),'/Data/Regression_df/Regression_df.csv'))}
+if(remove_private==F){
+
+Regression_df = left_join(Long_clean,Testing_results) %>%
+  mutate(t_coll_ind = ifelse(is.na(tot_collected)==T,1,0),
+         t_test_ind = ifelse(is.na(tot_tested)==T,1,0)) %>%
+  filter(!c(t_test_ind==1&t_coll_ind==1)) %>%
+  dplyr::select(-c(t_coll_ind,t_test_ind)) %>%
+  filter(is.na(tot_tested)==F) %>%
+  left_join(Location_table)
+write.csv(Regression_df,
+          file = paste0(getwd(),'/Data/Regression_df/Regression_df_w_private.csv'))}
+
+
+
+

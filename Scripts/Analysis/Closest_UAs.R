@@ -1,4 +1,7 @@
 # source the shapefile loading:
+Urban_areas = read_sf(paste0(getwd(),'/Data/Urban_areas/2010UAUC/urban2010.shp')) %>%
+  st_transform(.,32618)
+
 LT_spat = Location_table %>%
   st_as_sf(.,coords=c('longitude','latitude')) %>%
   st_set_crs(.,4326) %>%
