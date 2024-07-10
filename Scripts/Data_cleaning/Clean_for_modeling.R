@@ -65,6 +65,43 @@ Collections = read_excel(paste0(getwd(),"/Data/TL_data/Babesia Tick Collections_
          Year = as.numeric(substring(Date,1,4)),
          Month = as.numeric(substring(Date,6,7)))
 
+Duplicate_visits = Collections %>%
+  group_by(Site,Date) %>%
+  summarize(tot = n()) %>%
+  filter(tot>1) %>%
+  mutate(ind = paste0(Site,Date))
+
+# Need to combine into single visits:
+
+Dup_colls = Collections %>%
+  mutate(ind = paste0(Site,Date)) %>%
+  filter(ind %in% Duplicate_visits$ind) %>%
+  group_by(Site,Date) %>%
+  summarize(Larvae = sum(Larvae),
+            Nymphs = sum(Nymphs),
+            Females = sum(Females),
+            Males = sum(Males),
+            Adults = Males + Females,
+            `Nymph DV` = sum(`Nymph DV`),
+            `Female DV` = sum(`Female DV`),
+            `Male DV` = sum(`Male DV`),
+            Other = NA,
+            Unknowns = sum(Unknowns),
+            `Site Totals` = sum(`Site Totals`),
+            n_coll = sum(n_coll),
+            Site = unique(Site),
+            County = unique(County),
+            Date = unique(Date),
+            Month = as.numeric(substring(Date,6,7)),
+            Year = as.numeric(substring(Date,1,4)),
+            Town = unique(Town),
+            ID = NA)
+
+Collections = Collections %>%
+  mutate(ind = paste0(Site,Date)) %>%
+  filter(!ind%in%c(Duplicate_visits$ind)) %>%
+  bind_rows(.,Dup_colls)
+
 month_breakdown = data.frame(Month = c(1:12),
                              Target_Month = c("Adult",
                                         "Adult",
@@ -287,6 +324,7 @@ ltc = ltc %>%
   filter(!c(ID%in%c(Clean_check15$ID)))
 
 nrow(Collections)==nrow(ltc)+nrow(Clean)
+
 #write.csv(Clean,file=paste0(getwd(),"/Data/TL_data/Cleaned_collections_by_date/Coll_clean_",substring(Sys.time(),1,10)))
 Long_clean = Clean %>%
   rename(Adult = Adults,
@@ -318,12 +356,41 @@ Testing_results = fulldf %>%
                   ifelse(ANA_genotype=="ha"|ANA_genotype=="ha/v1",1,NA)),
          v1 = ifelse(is.na(ANA_genotype)==T,0,
                   ifelse(ANA_genotype=="v1"|ANA_genotype=="ha/v1"|ANA_genotype=="V1",1,0)),
+         und = ifelse(is.na(ANA_genotype)==T,0,
+                      ifelse(ANA_genotype=="Undetermined",1,0)),
          Lifestage = ifelse(tick_stage=="Male"|
                               tick_stage=="Female","Adult",tick_stage)) %>% 
   group_by(County,Date,Site,Lifestage) %>%
   summarize(ha = sum(ha,na.rm=T),
             v1 = sum(v1,na.rm=T),
+            und = sum(und,na.rm=T),
             tot_tested = n())
+
+Testing_results_co_infections = fulldf %>%
+  rename(Date = tick_coll_date,
+         Site = loc_name) %>%
+  filter(tick_genus == "Ixodes",
+         tick_species == "scapularis",
+         tick_stage %in% c("Male","Female","Nymph"),
+         tick_no_spec == 1,
+         is.na(pcrl_final_result_ANA)==F) %>% #removes untested ticks
+  mutate(ANA_result = ifelse(pcrl_final_result_ANA=="P",1,0),#Treats Indeterminates as negative
+         ha = ifelse(is.na(ANA_genotype)==T,0,
+                     ifelse(ANA_genotype=="ha",1,NA)),
+         v1 = ifelse(is.na(ANA_genotype)==T,0,
+                     ifelse(ANA_genotype=="v1"|ANA_genotype=="V1",1,0)),
+         coinf = ifelse(ANA_genotype=="ha/v1",1,0),
+         und = ifelse(is.na(ANA_genotype)==T,0,
+                      ifelse(ANA_genotype=="Undetermined",1,0)),
+         Lifestage = ifelse(tick_stage=="Male"|
+                              tick_stage=="Female","Adult",tick_stage)) %>% 
+  group_by(County,Date,Site,Lifestage) %>%
+  summarize(ha = sum(ha,na.rm=T),
+            v1 = sum(v1,na.rm=T),
+            coinf = sum(coinf,na.rm=T),
+            und = sum(und,na.rm=T),
+            tot_tested = n())
+
 if(remove_private==T){
 LT_private_prop <- read_excel("Data/TL_data/Location_table_6_3.xlsx") %>%
   rename(Site = loc_name,
@@ -354,8 +421,21 @@ Regression_df = left_join(Long_clean,Testing_results) %>%
   dplyr::select(-c(t_coll_ind,t_test_ind)) %>%
   filter(is.na(tot_tested)==F) %>%
   left_join(Location_table)
+
+summary_df = left_join(Long_clean,Testing_results_co_infections) %>%
+  mutate(t_coll_ind = ifelse(is.na(tot_collected)==T,1,0),
+         t_test_ind = ifelse(is.na(tot_tested)==T,1,0)) %>%
+  filter(!c(t_test_ind==1&t_coll_ind==1)) %>%
+  dplyr::select(-c(t_coll_ind,t_test_ind)) %>%
+  filter(is.na(tot_tested)==F) %>%
+  left_join(Location_table) %>%
+  mutate(Year = as.numeric(substring(Date,1,4)))
+  
+write.csv(summary_df,
+          file = paste0(getwd(),'/Data/Regression_df/Regression_df_w_coinf.csv'))  
 write.csv(Regression_df,
-          file = paste0(getwd(),'/Data/Regression_df/Regression_df_w_private.csv'))}
+          file = paste0(getwd(),'/Data/Regression_df/Regression_df_w_private.csv'))
+}
 
 
 

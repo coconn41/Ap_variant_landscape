@@ -18,6 +18,31 @@ adult_ha_aspatial_landscape = glmmTMB(formula = ha ~ Landscape_metric +
                             offset = log(tot_tested),
                             data = Adult_df)
 summary(adult_ha_aspatial_landscape)
+Adult_df$ha_landscape_resid = abs(residuals(adult_ha_aspatial_landscape))
+for(i in 2008:max(Adult_df$Year)){
+  df = Adult_df %>%
+    filter(Year==i)
+ moran_test = moranfast(df$ha_landscape_resid,
+            df$longitude,
+            df$latitude)
+  if(i==2008){morandf = data.frame(I = moran_test$observed,
+                                                  p = moran_test$p.value,
+                                                  Year = i,
+                                                  dependent = "ha",
+                                                  lifestage = "Adult")}
+if(i>2008){morandf2 = data.frame(I = moran_test$observed,
+                                                p = moran_test$p.value,
+                                                Year = i,
+                                                dependent = "ha",
+                                                lifestage = "Adult")
+                      morandf = rbind(morandf,morandf2)}}
+morandf$p.adj = p.adjust(morandf$p)
+morandf$sig = ifelse(morandf$p.adj<0.05,'sig','ns')
+ggplot(data=morandf,
+       aes(x=Year,y=I,alpha=sig))+
+  geom_point()+
+  scale_alpha_manual(values=c(0.3,1))
+
 Moran_maps(df = Adult_df,
            model = adult_ha_aspatial_landscape,
            seed = T,
@@ -34,6 +59,33 @@ adult_v1_aspatial_landscape = glmmTMB(formula = v1 ~ Landscape_metric +
                             offset = log(tot_tested),
                             data = Adult_df)
 summary(adult_v1_aspatial_landscape)
+
+Adult_df$v1_landscape_resid = abs(residuals(adult_v1_aspatial_landscape))
+for(i in 2008:max(Adult_df$Year)){
+  df = Adult_df %>%
+    filter(Year==i)
+  moran_test = moranfast(df$v1_landscape_resid,
+                         df$longitude,
+                         df$latitude)
+  if(i==2008){morandf = data.frame(I = moran_test$observed,
+                                   p = moran_test$p.value,
+                                   Year = i,
+                                   dependent = "v1",
+                                   lifestage = "Adult")}
+  if(i>2008){morandf2 = data.frame(I = moran_test$observed,
+                                   p = moran_test$p.value,
+                                   Year = i,
+                                   dependent = "v1",
+                                   lifestage = "Adult")
+  morandf = rbind(morandf,morandf2)}}
+morandf$p.adj = p.adjust(morandf$p)
+morandf$sig = ifelse(morandf$p.adj<0.05,'sig','ns')
+ggplot(data=morandf,
+       aes(x=Year,y=I,alpha=sig))+
+  geom_point()+
+  scale_alpha_manual(values=c(0.3,1))
+
+
 Moran_maps(df = Adult_df,
            model = adult_v1_aspatial_landscape,
            seed = T,
@@ -51,6 +103,33 @@ nymph_ha_aspatial_landscape = glmmTMB(formula = ha ~ Landscape_metric +
                             data = Nymph_df)
 
 summary(nymph_ha_aspatial_landscape)
+
+Nymph_df$ha_landscape_resid = abs(residuals(nymph_ha_aspatial_landscape))
+starting_year = 2008
+for(i in starting_year:max(Nymph_df$Year)){
+  df = Nymph_df %>%
+    filter(Year==i)
+  moran_test = moranfast(df$ha_landscape_resid,
+                         df$longitude,
+                         df$latitude)
+  if(i==starting_year){morandf = data.frame(I = moran_test$observed,
+                                   p = moran_test$p.value,
+                                   Year = i,
+                                   dependent = "ha",
+                                   lifestage = "Nymph")}
+  if(i>starting_year){morandf2 = data.frame(I = moran_test$observed,
+                                   p = moran_test$p.value,
+                                   Year = i,
+                                   dependent = "ha",
+                                   lifestage = "Nymph")
+  morandf = rbind(morandf,morandf2)}}
+morandf$p.adj = p.adjust(morandf$p)
+morandf$sig = ifelse(morandf$p.adj<0.05,'sig','ns')
+ggplot(data=morandf,
+       aes(x=Year,y=I,alpha=sig))+
+  geom_point()+
+  scale_alpha_manual(values=c(0.3,1))
+
 Moran_maps(df = Nymph_df,
            model = nymph_ha_aspatial_landscape,
            seed = T,
@@ -67,6 +146,33 @@ nymph_v1_aspatial_landscape = glmmTMB(formula = v1 ~ Landscape_metric +
                             offset = log(tot_tested),
                             data = Nymph_df)
 summary(nymph_v1_aspatial_landscape)
+
+Nymph_df$v1_landscape_resid = abs(residuals(nymph_v1_aspatial_landscape))
+starting_year = 2008
+for(i in starting_year:max(Nymph_df$Year)){
+  df = Nymph_df %>%
+    filter(Year==i)
+  moran_test = moranfast(df$v1_landscape_resid,
+                         df$longitude,
+                         df$latitude)
+  if(i==starting_year){morandf = data.frame(I = moran_test$observed,
+                                            p = moran_test$p.value,
+                                            Year = i,
+                                            dependent = "v1",
+                                            lifestage = "Nymph")}
+  if(i>starting_year){morandf2 = data.frame(I = moran_test$observed,
+                                            p = moran_test$p.value,
+                                            Year = i,
+                                            dependent = "v1",
+                                            lifestage = "Nymph")
+  morandf = rbind(morandf,morandf2)}}
+morandf$p.adj = p.adjust(morandf$p)
+morandf$sig = ifelse(morandf$p.adj<0.05,'sig','ns')
+ggplot(data=morandf,
+       aes(x=Year,y=I,alpha=sig))+
+  geom_point()+
+  scale_alpha_manual(values=c(0.3,1))
+
 Moran_maps(df = Nymph_df,
            model = nymph_v1_aspatial_landscape,
            seed = T,

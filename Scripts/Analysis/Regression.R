@@ -1,46 +1,8 @@
 #####
-# Load Libraries
+# Load data and libraries
 #####
-library(readr)
-library(tidyverse)
-library(mgcv) 
-library(spdep)
-library(glmmTMB)
-library(performance)
-#####
-# Read in and separate data
-#####
-remove_private = F
-if(remove_private==T){
-Regression_df <- read_csv("Data/Regression_df/Regression_df.csv")[,-1] %>%
-  mutate(Site = as.factor(Site),
-         UNIT = as.factor(UNIT),
-         Year = as.numeric(substring(Date,1,4)),
-         competition = ha - v1) %>%
-  filter(is.na(latitude)==F)}
-if(remove_private==F){
-  Regression_df <- read_csv("Data/Regression_df/Regression_df_w_private.csv")[,-1] %>%
-    mutate(Site = as.factor(Site),
-           UNIT = as.factor(UNIT),
-           Year = as.numeric(substring(Date,1,4)),
-           competition = ha - v1) %>%
-    filter(is.na(latitude)==F)
-}
-Nymph_df = Regression_df %>%
-  filter(Lifestage == "Nymph")
+source(paste0(getwd(),'/Scripts/Data_cleaning/Load_datasets.R'))
 
-Adult_df = Regression_df %>%
-  filter(Lifestage == "Adult")
-
-Adult_df_spat = Adult_df %>%
-  st_as_sf(.,coords=c('longitude','latitude')) %>%
-  st_set_crs(.,4326) %>%
-  st_transform(.,32618)
-
-Nymph_df_spat = Nymph_df %>%
-  st_as_sf(.,coords=c('longitude','latitude')) %>%
-  st_set_crs(.,4326) %>%
-  st_transform(.,32618)
 #####
 # Load Moran Function
 #####
@@ -69,6 +31,16 @@ source(paste0(getwd(),'/Scripts/Analysis/Spatial_landscape_models.R'))
 #####
 # Combine results:
 #####
+
+if((AIC(adult_ha_aspatial)-AIC(adult_ha_spatial))>2){print("Spatial is better")}
+if((AIC(adult_v1_aspatial)-AIC(adult_v1_spatial))>2){print("Spatial is better")}
+if((AIC(nymph_ha_aspatial)-AIC(nymph_ha_spatial))>2){print("Spatial is better")}
+if((AIC(nymph_v1_aspatial)-AIC(nymph_v1_spatial))>2){print("Spatial is better")}
+if((AIC(adult_ha_aspatial_landscape)-AIC(adult_ha_spatial_landscape))>2){print("Spatial is better")}
+if((AIC(adult_v1_aspatial_landscape)-AIC(adult_v1_spatial_landscape))>2){print("Spatial is better")}
+if((AIC(nymph_ha_aspatial_landscape)-AIC(nymph_ha_spatial_landscape))>2){print("Spatial is better")}
+if((AIC(nymph_v1_aspatial_landscape)-AIC(nymph_ha_spatial_landscape))>2){print("Spatial is better")}
+
 
 final_model_results = rbind(final_patch_results,final_landscape_results) %>%
   mutate(exponentiated = exp(Estimate))
