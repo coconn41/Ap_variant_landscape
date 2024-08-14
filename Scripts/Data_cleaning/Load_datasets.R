@@ -66,3 +66,10 @@ Nymph_df_spat = Nymph_df %>%
   st_as_sf(.,coords=c('longitude','latitude')) %>%
   st_set_crs(.,4326) %>%
   st_transform(.,32618)
+
+
+Regression_df_w_density = read_csv(paste0(getwd(),
+                                          "/Data/Regression_df/Regression_df_w_density.csv"))
+  
+  
+  

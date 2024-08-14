@@ -70,7 +70,8 @@ m2=tm_shape(WMUs_4_choro %>%
                 label = "Sampling sites")+
   tm_polygons(col = 'Landscape_metric',
               title = "Sinuous Connection\nReduction (Landscape)",
-              palette = get_brewer_pal("Greens"))+
+              palette = get_brewer_pal("Greens"),
+              legend.hist = T)+
   tm_shape(Regression_df_spat)+
   tm_dots(col='black')+
   tm_layout(legend.position = c('left','bottom'))

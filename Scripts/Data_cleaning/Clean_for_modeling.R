@@ -431,10 +431,16 @@ summary_df = left_join(Long_clean,Testing_results_co_infections) %>%
   left_join(Location_table) %>%
   mutate(Year = as.numeric(substring(Date,1,4)))
   
+Regression_df_w_density = Collections %>%
+  dplyr::select(County,Date,Site,`Target density`) %>%
+  left_join(Regression_df,.,by = join_by(County,Date,Site))
+
 write.csv(summary_df,
           file = paste0(getwd(),'/Data/Regression_df/Regression_df_w_coinf.csv'))  
 write.csv(Regression_df,
           file = paste0(getwd(),'/Data/Regression_df/Regression_df_w_private.csv'))
+write.csv(Regression_df_w_density,
+          file = paste0(getwd(),'/Data/Regression_df/Regression_df_w_density.csv'))
 }
 
 
