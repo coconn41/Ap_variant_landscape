@@ -16,3 +16,11 @@ source(paste0(getwd(),'/Scripts/Analysis/Aspatial_models.R'))
 print(aspatial_results)
 
 print(All_models)
+
+#####
+# Density models
+#####
+
+source(paste0(getwd(),'/Scripts/Analysis/Density_models.R'))
+
+print(final_models)

@@ -49,7 +49,7 @@ if(AIC(adult_ha_aspatial3)==min(c(AIC(adult_ha_aspatial),
   adult_ha_best = adult_ha_aspatial3}
 
 summary(adult_ha_best)
-Adult_df$aspatial_ha_residuals = residuals(adult_ha_best)
+Adult_df$aspatial_ha_residuals = abs(residuals(adult_ha_best))
 if(local_moran==T){Moran_maps(df = Adult_df,
            model = adult_ha_best,
            seed = T,
@@ -114,7 +114,7 @@ if(AIC(adult_v1_aspatial3)==min(c(AIC(adult_v1_aspatial),
                                   AIC(adult_v1_aspatial3)))){
   adult_v1_best = adult_v1_aspatial3}
 summary(adult_v1_best)
-Adult_df$aspatial_v1_residuals = residuals(adult_v1_best)
+Adult_df$aspatial_v1_residuals = abs(residuals(adult_v1_best))
 if(local_moran==T){Moran_maps(df = Adult_df,
            model = adult_v1_best,
            seed = T,
@@ -175,7 +175,7 @@ if(AIC(nymph_ha_aspatial3)==min(c(AIC(nymph_ha_aspatial),
                                   AIC(nymph_ha_aspatial3)))){
   nymph_ha_best = nymph_ha_aspatial3}
 summary(nymph_ha_best)
-Nymph_df$aspatial_ha_residuals = residuals(nymph_ha_best)
+Nymph_df$aspatial_ha_residuals = abs(residuals(nymph_ha_best))
 if(local_moran==T){Moran_maps(df = Nymph_df,
            model = nymph_ha_best,
            seed = T,
@@ -235,7 +235,7 @@ if(AIC(nymph_v1_aspatial3)==min(c(AIC(nymph_v1_aspatial),
                                  AIC(nymph_v1_aspatial3)))){
   nymph_v1_best = nymph_v1_aspatial3}
 summary(nymph_v1_best)
-Nymph_df$aspatial_v1_residuals = residuals(nymph_v1_best)
+Nymph_df$aspatial_v1_residuals = abs(residuals(nymph_v1_best))
 if(local_moran==T){Moran_maps(df = Nymph_df,
            model = nymph_v1_best,
            seed = T,
