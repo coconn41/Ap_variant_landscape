@@ -49,13 +49,17 @@ adult_density_mod = lme4::lmer(formula = log(density) ~ metric +
 summary(adult_density_mod)
 AIC(adult_density_mod)
 
-adult_density_mod = lme4::lmer(formula = log(density) ~ metric + 
+adult_density_mod2 = lme4::lmer(formula = log(density) ~ metric + 
                                                (1|UNIT) + (1|UNIT:Site),
                                data = Adult_density_df)
 summary(adult_density_mod)
 AIC(adult_density_mod)
 
-Adult_density_df$residuals = abs(residuals(adult_density_mod))
+if(AIC(adult_density_mod)-AIC(adult_density_mod2)>2){adult_density_mod_best = adult_density_mod}
+if(AIC(adult_density_mod)-AIC(adult_density_mod2)<=2){adult_density_mod_best = adult_density_mod2}
+summary(adult_density_mod_best)
+
+Adult_density_df$residuals = abs(residuals(adult_density_mod_best))
 
 set.seed(1)
 ind = 0
@@ -98,13 +102,17 @@ nymph_density_mod = lme4::lmer(formula = log(density) ~ metric +
 summary(nymph_density_mod)
 AIC(nymph_density_mod)
 
-nymph_density_mod = lme4::lmer(formula = log(density) ~ metric + 
+nymph_density_mod2 = lme4::lmer(formula = log(density) ~ metric + 
                                  (1|UNIT) + (1|UNIT:Site),
                                data = Nymph_density_df)
 summary(nymph_density_mod)
 AIC(nymph_density_mod)
 
-Nymph_density_df$residuals = abs(residuals(nymph_density_mod))
+if(AIC(nymph_density_mod)-AIC(nymph_density_mod2)>2){nymph_density_mod_best = nymph_density_mod}
+if(AIC(nymph_density_mod)-AIC(nymph_density_mod2)<=2){nymph_density_mod_best = nymph_density_mod2}
+summary(nymph_density_mod_best)
+
+Nymph_density_df$residuals = abs(residuals(nymph_density_mod_best))
 
 set.seed(1)
 ind = 0
@@ -138,7 +146,7 @@ for(i in min(Nymph_density_df$Year):max(Nymph_density_df$Year)){
 morandf_fin = rbind(moran_df,moran_df3)
 morandf_fin$p_adjust = p.adjust(morandf_fin$p_val)
 
-final_models = data.frame(Lifestage = c("Adult","Nymph"),
+final_scr_to_d_models = data.frame(Lifestage = c("Adult","Nymph"),
                           parameter = c("Patch","Patch"),
                           Beta = c(summary(adult_density_mod)$coefficients[2],
                                    summary(nymph_density_mod)$coefficients[2]),
