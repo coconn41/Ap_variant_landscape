@@ -45,7 +45,8 @@ Nymph_density_df = Regression_df_w_density %>%
 
 
 adult_ha_density_mod = glmmTMB(formula = ha ~ density +
-                                 (1|UNIT) + (1|UNIT:Site),
+                                 (1|UNIT),
+                               zi = ~1,
                             family = poisson,
                             offset = log(tot_tested),
                             data = Adult_density_df)
@@ -87,7 +88,8 @@ for(i in min(Adult_density_df$Year):max(Adult_density_df$Year)){
 
 
 adult_v1_density_mod = glmmTMB(formula = v1 ~ density +
-                              (1|UNIT) + (1|UNIT:Site),
+                              (1|UNIT),
+                              zi = ~1,
                             family = poisson,
                             offset = log(tot_tested),
                             data = Adult_density_df)
@@ -126,7 +128,8 @@ for(i in min(Adult_density_df$Year):max(Adult_density_df$Year)){
 #####
 
 nymph_ha_density_mod = glmmTMB(formula = ha ~ density +
-                              (1|UNIT) + (1|UNIT:Site),
+                              (1|UNIT),
+                              zi = ~1,
                             family = poisson,
                             offset = log(tot_tested),
                             data = Nymph_density_df)
@@ -162,7 +165,8 @@ for(i in min(Nymph_density_df$Year):max(Nymph_density_df$Year)){
 }
 
 nymph_v1_density_mod = glmmTMB(formula = v1 ~ density +
-                                 (1|UNIT) + (1|UNIT:Site),
+                                 (1|UNIT),
+                               zi = ~1,
                             family = poisson,
                             offset = log(tot_tested),
                             data = Nymph_density_df)
@@ -200,7 +204,7 @@ for(i in min(Nymph_density_df$Year):max(Nymph_density_df$Year)){
 moran_df$padjust = p.adjust(moran_df$p_val)
 
 final_d_to_p_models = data.frame(Lifestage = c("Adult","Nymph","Adult","Nymph"),
-                          parameter = c("Patch","Patch","Patch","Patch"),
+                                 Pathogen = c('ha','ha','v1','v1'),
                           Beta = c(summary(adult_ha_density_mod)$coefficients$cond[2],
                                    summary(nymph_ha_density_mod)$coefficients$cond[2],
                                    summary(adult_v1_density_mod)$coefficients$cond[2],

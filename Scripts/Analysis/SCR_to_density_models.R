@@ -42,14 +42,14 @@ Nymph_density_df = Regression_df_w_density %>%
 # Adult density model
 #####
 
-adult_density_mod = lme4::lmer(formula = log(density) ~ metric + 
+adult_density_mod = lme4::lmer(formula = density ~ metric + 
                               Landscape_metric +
                               (1|UNIT) + (1|UNIT:Site),
                             data = Adult_density_df)
 summary(adult_density_mod)
 AIC(adult_density_mod)
 
-adult_density_mod2 = lme4::lmer(formula = log(density) ~ metric + 
+adult_density_mod2 = lme4::lmer(formula = density ~ metric + 
                                                (1|UNIT) + (1|UNIT:Site),
                                data = Adult_density_df)
 summary(adult_density_mod2)
@@ -95,14 +95,14 @@ for(i in min(Adult_density_df$Year):max(Adult_density_df$Year)){
 #####
 
 
-nymph_density_mod = lme4::lmer(formula = log(density) ~ metric + 
+nymph_density_mod = lme4::lmer(formula = density ~ metric + 
                                  Landscape_metric +
                                  (1|UNIT) + (1|UNIT:Site),
                                data = Nymph_density_df)
 summary(nymph_density_mod)
 AIC(nymph_density_mod)
 
-nymph_density_mod2 = lme4::lmer(formula = log(density) ~ metric + 
+nymph_density_mod2 = lme4::lmer(formula = density ~ metric + 
                                  (1|UNIT) + (1|UNIT:Site),
                                data = Nymph_density_df)
 summary(nymph_density_mod2)
@@ -146,14 +146,16 @@ for(i in min(Nymph_density_df$Year):max(Nymph_density_df$Year)){
 morandf_fin = rbind(moran_df,moran_df3)
 morandf_fin$p_adjust = p.adjust(morandf_fin$p_val)
 
-final_scr_to_d_models = data.frame(Lifestage = c("Adult","Nymph"),
-                          parameter = c("Patch","Patch"),
+final_scr_to_d_models = data.frame(Lifestage = c("Adult","Adult","Nymph","Nymph"),
+                          parameter = c("Patch","Landscape","Patch","Landscape"),
                           Beta = c(summary(adult_density_mod_best)$coefficients[2],
-                                   summary(nymph_density_mod_best)$coefficients[2]),
-                          exp_beta = c(exp(summary(adult_density_mod_best)$coefficients[2]),
-                                       exp(summary(nymph_density_mod_best)$coefficients[2])),
-                          T_val = c(summary(adult_density_mod_best)$coefficients[6],
-                                    summary(nymph_density_mod_best)$coefficients[6]))
+                                   summary(adult_density_mod_best)$coefficients[3],
+                                   summary(nymph_density_mod_best)$coefficients[2],
+                                   summary(nymph_density_mod_best)$coefficients[3]),
+                          T_val = c(summary(adult_density_mod_best)$coefficients[8],
+                                    summary(adult_density_mod_best)$coefficients[9],
+                                    summary(nymph_density_mod_best)$coefficients[8],
+                                    summary(nymph_density_mod_best)$coefficients[9]))
 
 
 

@@ -35,18 +35,8 @@ adult_ha_aspatial3 = glmmTMB(formula = ha ~ Landscape_metric +
                             offset = log(tot_tested),
                             family = poisson,
                             data = Adult_df)
-if(AIC(adult_ha_aspatial)==min(c(AIC(adult_ha_aspatial),
-      AIC(adult_ha_aspatial2),
-      AIC(adult_ha_aspatial3)))){
-  adult_ha_best = adult_ha_aspatial}
-if(AIC(adult_ha_aspatial2)==min(c(AIC(adult_ha_aspatial),
-                                 AIC(adult_ha_aspatial2),
-                                 AIC(adult_ha_aspatial3)))){
-  adult_ha_best = adult_ha_aspatial2}
-if(AIC(adult_ha_aspatial3)==min(c(AIC(adult_ha_aspatial),
-                                 AIC(adult_ha_aspatial2),
-                                 AIC(adult_ha_aspatial3)))){
-  adult_ha_best = adult_ha_aspatial3}
+
+adult_ha_best = adult_ha_aspatial3
 
 summary(adult_ha_best)
 Adult_df$aspatial_ha_residuals = abs(residuals(adult_ha_best))
@@ -101,18 +91,8 @@ adult_v1_aspatial3 = glmmTMB(formula = v1 ~ Landscape_metric +
                              offset = log(tot_tested),
                              family = poisson,
                              data = Adult_df)
-if(AIC(adult_v1_aspatial)==min(c(AIC(adult_v1_aspatial),
-                                 AIC(adult_v1_aspatial2),
-                                 AIC(adult_v1_aspatial3)))){
-  adult_v1_best = adult_v1_aspatial}
-if(AIC(adult_v1_aspatial2)==min(c(AIC(adult_v1_aspatial),
-                                  AIC(adult_v1_aspatial2),
-                                  AIC(adult_v1_aspatial3)))){
-  adult_v1_best = adult_v1_aspatial2}
-if(AIC(adult_v1_aspatial3)==min(c(AIC(adult_v1_aspatial),
-                                  AIC(adult_v1_aspatial2),
-                                  AIC(adult_v1_aspatial3)))){
-  adult_v1_best = adult_v1_aspatial3}
+adult_v1_best = adult_v1_aspatial
+
 summary(adult_v1_best)
 Adult_df$aspatial_v1_residuals = abs(residuals(adult_v1_best))
 if(local_moran==T){Moran_maps(df = Adult_df,
@@ -150,7 +130,6 @@ nymph_ha_aspatial = glmmTMB(formula = ha ~ metric +
                             offset = log(tot_tested),
                             data = Nymph_df)
 nymph_ha_aspatial2 = glmmTMB(formula = ha ~ metric + 
-                               Landscape_metric +
                                (1|Site),
                              zi = ~1,
                              offset = log(tot_tested),
@@ -162,18 +141,9 @@ nymph_ha_aspatial3 = glmmTMB(formula = ha ~ Landscape_metric +
                              offset = log(tot_tested),
                              family = poisson,
                              data = Nymph_df)
-if(AIC(nymph_ha_aspatial)==min(c(AIC(nymph_ha_aspatial),
-                                 AIC(nymph_ha_aspatial2),
-                                 AIC(nymph_ha_aspatial3)))){
-  nymph_ha_best = adult_v1_aspatial}
-if(AIC(nymph_ha_aspatial2)==min(c(AIC(nymph_ha_aspatial),
-                                  AIC(nymph_ha_aspatial2),
-                                  AIC(nymph_ha_aspatial3)))){
-  nymph_ha_best = nymph_ha_aspatial2}
-if(AIC(nymph_ha_aspatial3)==min(c(AIC(nymph_ha_aspatial),
-                                  AIC(nymph_ha_aspatial2),
-                                  AIC(nymph_ha_aspatial3)))){
-  nymph_ha_best = nymph_ha_aspatial3}
+
+nymph_ha_best = nymph_ha_aspatial3
+
 summary(nymph_ha_best)
 Nymph_df$aspatial_ha_residuals = abs(residuals(nymph_ha_best))
 if(local_moran==T){Moran_maps(df = Nymph_df,
@@ -210,7 +180,6 @@ nymph_v1_aspatial = glmmTMB(formula = v1 ~ metric +
                             offset = log(tot_tested),
                             data = Nymph_df)
 nymph_v1_aspatial2 = glmmTMB(formula = v1 ~ metric + 
-                               Landscape_metric +
                                (1|Site),
                              zi = ~1,
                              offset = log(tot_tested),
@@ -222,18 +191,9 @@ nymph_v1_aspatial3 = glmmTMB(formula = v1 ~ Landscape_metric +
                              offset = log(tot_tested),
                              family = poisson,
                              data = Nymph_df)
-if(AIC(nymph_v1_aspatial)==min(c(AIC(nymph_v1_aspatial),
-                                 AIC(nymph_v1_aspatial2),
-                                 AIC(nymph_v1_aspatial3)))){
-  nymph_v1_best = nymph_v1_aspatial}
-if(AIC(nymph_v1_aspatial2)==min(c(AIC(nymph_v1_aspatial),
-                                 AIC(nymph_v1_aspatial2),
-                                 AIC(nymph_v1_aspatial3)))){
-  nymph_v1_best = nymph_v1_aspatial2}
-if(AIC(nymph_v1_aspatial3)==min(c(AIC(nymph_v1_aspatial),
-                                 AIC(nymph_v1_aspatial2),
-                                 AIC(nymph_v1_aspatial3)))){
-  nymph_v1_best = nymph_v1_aspatial3}
+
+nymph_v1_best = nymph_v1_aspatial
+
 summary(nymph_v1_best)
 Nymph_df$aspatial_v1_residuals = abs(residuals(nymph_v1_best))
 if(local_moran==T){Moran_maps(df = Nymph_df,

@@ -17,16 +17,23 @@ source(paste0(getwd(),'/Scripts/Analysis/Local_Moran_fn.R'))
 source(paste0(getwd(),'/Scripts/Analysis/Aspatial_models.R'))
 print(aspatial_results)
 print(All_models)
-length(which(moran_df$p_adjust<0.05))
+#length(which(moran_df$p_adjust<0.05))
 #####
 # Density models
 #####
 
 source(paste0(getwd(),'/Scripts/Analysis/SCR_to_density_models.R'))
 print(final_scr_to_d_models)
-length(which(morandf_fin$p_adjust<0.05))/nrow(morandf_fin)
+#length(which(morandf_fin$p_adjust<0.05))/nrow(morandf_fin)
 
 
 source(paste0(getwd(),'/Scripts/Analysis/density_to_pathogen_models.R'))
 print(final_d_to_p_models)
-length(which(moran_df$padjust<0.05))/nrow(moran_df)
+#length(which(moran_df$padjust<0.05))/nrow(moran_df)
+
+#####
+# ERI models
+#####
+
+source(paste0(getwd(),'/Scripts/Analysis/ERI_models.R'))
+print(final_ERI_models)
