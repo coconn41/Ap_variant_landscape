@@ -12,8 +12,7 @@ library(tmaptools)
 source(paste0(getwd(),'/Scripts/Figures/NYS_shapefile.R'))
 Regression_df <- read_csv("Data/Regression_df/Regression_df_w_private.csv")[,-1] %>%
   mutate(Site = as.factor(Site),
-         UNIT = as.factor(UNIT),
-         Year = as.numeric(substring(Date,1,4))) %>%
+         UNIT = as.factor(UNIT)) %>%
   filter(is.na(latitude)==F)
 
 #####
