@@ -12,8 +12,7 @@ library(tmaptools)
 source(paste0(getwd(),'/Scripts/Figures/NYS_shapefile.R'))
 Regression_df <- read_csv("Data/Regression_df/Regression_df_w_private.csv")[,-1] %>%
   mutate(Site = as.factor(Site),
-         UNIT = as.factor(UNIT),
-         Year = as.numeric(substring(Date,1,4))) %>%
+         UNIT = as.factor(UNIT)) %>%
   filter(is.na(latitude)==F)
 
 Regression_df_long = Regression_df %>%
@@ -23,7 +22,7 @@ Regression_df_long = Regression_df %>%
          Prevalence = (value/tot_tested)*100)
 
 Adult_df_long = Regression_df_long %>%
-  filter(Target_stage == "Adult")
+  filter(Lifestage == "Adult")
 
 Regression_df_spat = Regression_df %>%
   pivot_longer(cols=c(ha,v1)) %>%
@@ -37,7 +36,7 @@ Regression_df_spat = Regression_df %>%
 m1 = tm_shape(NYS)+
   tm_borders()+
   tm_shape(Regression_df_spat %>%
-             filter(Target_stage == "Adult",
+             filter(Lifestage == "Adult",
                     name == "ha") %>%
              group_by(Site) %>%
              summarize(mean_prevalence = mean(Prevalence),
@@ -49,7 +48,7 @@ m1 = tm_shape(NYS)+
           shape = 21,
           size = .3)+
 tm_shape(Regression_df_spat %>%
-           filter(Target_stage == "Adult",
+           filter(Lifestage == "Adult",
                   name == "ha") %>%
            group_by(Site) %>%
            summarize(mean_prevalence = mean(Prevalence),
@@ -65,7 +64,7 @@ tm_shape(Regression_df_spat %>%
           legend.show = F,
           title = "Mean prevalence")+
   tm_add_legend(type = 'fill',
-                title = "Mean prevalence",
+                title = "Mean prevalence (%)",
                 labels = c("0",
                            ">0 to 5",
                            "5 to 10",
@@ -79,7 +78,7 @@ tm_shape(Regression_df_spat %>%
 m2 = tm_shape(NYS)+
   tm_borders()+
   tm_shape(Regression_df_spat %>%
-             filter(Target_stage == "Nymph",
+             filter(Lifestage == "Nymph",
                     name == "ha") %>%
              group_by(Site) %>%
              summarize(mean_prevalence = mean(Prevalence),
@@ -91,7 +90,7 @@ m2 = tm_shape(NYS)+
           shape = 21,
           size = .3)+
   tm_shape(Regression_df_spat %>%
-             filter(Target_stage == "Nymph",
+             filter(Lifestage == "Nymph",
                     name == "ha") %>%
              group_by(Site) %>%
              summarize(mean_prevalence = mean(Prevalence),
@@ -107,7 +106,7 @@ m2 = tm_shape(NYS)+
                                               contrast = c(.3,1)),
           legend.show = F)+
   tm_add_legend(type = 'fill',
-                title = "Mean prevalence",
+                title = "Mean prevalence (%)",
                 labels = c("0",
                            ">0 to 2",
                            "2 to 4",
@@ -122,7 +121,7 @@ m2 = tm_shape(NYS)+
 m3 = tm_shape(NYS)+
   tm_borders()+
   tm_shape(Regression_df_spat %>%
-             filter(Target_stage == "Adult",
+             filter(Lifestage == "Adult",
                     name == "v1") %>%
              group_by(Site) %>%
              summarize(mean_prevalence = mean(Prevalence),
@@ -133,7 +132,7 @@ m3 = tm_shape(NYS)+
           shape = 21,
           size = .3)+
   tm_shape(Regression_df_spat %>%
-             filter(Target_stage == "Adult",
+             filter(Lifestage == "Adult",
                     name == "v1") %>%
              group_by(Site) %>%
              summarize(mean_prevalence = mean(Prevalence),
@@ -149,7 +148,7 @@ m3 = tm_shape(NYS)+
           legend.show = F,
           title = "Mean prevalence")+
   tm_add_legend(type = 'fill',
-                title = "Mean prevalence",
+                title = "Mean prevalence (%)",
                 labels = c("0",
                            ">0 to 2",
                            "2 to 4",
@@ -163,7 +162,7 @@ m3 = tm_shape(NYS)+
 m4 = tm_shape(NYS)+
   tm_borders()+
   tm_shape(Regression_df_spat %>%
-             filter(Target_stage == "Nymph",
+             filter(Lifestage == "Nymph",
                     name == "v1") %>%
              group_by(Site) %>%
              summarize(mean_prevalence = mean(Prevalence),
@@ -174,7 +173,7 @@ m4 = tm_shape(NYS)+
           shape = 21,
           size = .3)+
   tm_shape(Regression_df_spat %>%
-             filter(Target_stage == "Nymph",
+             filter(Lifestage == "Nymph",
                     name == "v1") %>%
              group_by(Site) %>%
              summarize(mean_prevalence = mean(Prevalence),
@@ -190,7 +189,7 @@ m4 = tm_shape(NYS)+
                                             contrast = c(.3,1)),
          legend.show=F)+
   tm_add_legend(type = 'fill',
-                title = "Mean prevalence",
+                title = "Mean prevalence (%)",
                 labels = c("0",
                            ">0 to 2",
                            "2 to 4",
