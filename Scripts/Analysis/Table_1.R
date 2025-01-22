@@ -7,6 +7,9 @@ summary_dataset = read.csv(file = paste0(getwd(),'/Data/Regression_df/Regression
 # Calculate summary stats
 #####
 
+# Mean and sd of ticks collected:
+summary_dataset %>% group_by(Lifestage) %>% summarize(mn = mean(tot_collected,na.rm=T))
+
 # Total unique sites:
 length(unique(summary_dataset$Site))
 

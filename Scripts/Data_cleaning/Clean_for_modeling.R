@@ -18,10 +18,6 @@ if(remove_private==F){
     mutate(latitude = ifelse(Site == "Trevor Park",40.952928,latitude),
            longitude = ifelse(Site == "Trevor Park",-73.897142,longitude))}
 #####
-# Calculate closest UAs
-#####
-source(paste0(getwd(),'/Scripts/Analysis/Closest_UAs.R'))
-#####
 # Load landscape level SCR WMU values
 #####
 unique_files = list.files(paste0(getwd(),'/Data/SCR_wmu_landscape/'))
@@ -55,15 +51,24 @@ Location_table = left_join(Location_table,WMUs %>%
 #####
 # Load collection data and clean
 #####
-Collections = read_excel(paste0(getwd(),"/Data/TL_data/Babesia Tick Collections_6_3.xlsx")) %>%
+Collections = read_excel(paste0(getwd(),"/Data/TL_data/Babesia Tick Collections_10_15.xlsx")) %>%
   rename(Nymphs=`Nymph IS`,
          Females = FemaleIS,
          Males=`Male IS`,
-         n_coll = `. Collectors`,
+         n_coll = `# Collectors`,
          avg_target = `Avg target`) %>%
   mutate(Adults = Males + Females,
          Year = as.numeric(substring(Date,1,4)),
          Month = as.numeric(substring(Date,6,7)))
+
+# Calculate average SCR values at sites:
+avgs = left_join(Collections,Location_table) %>%
+  filter(is.na(Location_ID)==F) %>%
+  group_by(Location_ID) %>%
+  summarize(SCR = max(metric,na.rm=T))
+mean(avgs$SCR)
+sd(avgs$SCR)
+
 
 Duplicate_visits = Collections %>%
   group_by(Site,Date) %>%
@@ -341,7 +346,7 @@ remove(Clean_check1,Clean_check2,Clean_check3,Clean_check4,Clean_check5,Clean_ch
 # Load PCR testing results and clean
 #####
 
-fulldf = read_excel(paste0(getwd(),"/Data/TL_data/Tick_collection_table_all data_6_3.xlsx"))
+fulldf = read_excel(paste0(getwd(),"/Data/TL_data/Tick_collection_table_all data_10_15.xlsx"))
 
 Testing_results = fulldf %>%
   rename(Date = tick_coll_date,
@@ -429,11 +434,26 @@ summary_df = left_join(Long_clean,Testing_results_co_infections) %>%
   dplyr::select(-c(t_coll_ind,t_test_ind)) %>%
   filter(is.na(tot_tested)==F) %>%
   left_join(Location_table) %>%
-  mutate(Year = as.numeric(substring(Date,1,4)))
+  mutate(Year = as.numeric(substring(Date,1,4)),
+         Month = as.numeric(substring(Date,6,7)),
+         Day = as.numeric(substring(Date,9,10))) %>%
+  mutate(Year = ifelse(Lifestage=="Adult"&Month<9,Year-1,Year))
   
+summary_avgs = summary_df %>%
+  filter(is.na(metric)==F) %>%
+  group_by(Site) %>%
+  summarize(mx_SCR = max(metric,na.rm=T))
+mean(summary_avgs$mx_SCR)
+sd(summary_avgs$mx_SCR)
 Regression_df_w_density = Collections %>%
   dplyr::select(County,Date,Site,`Target density`) %>%
-  left_join(Regression_df,.,by = join_by(County,Date,Site))
+  left_join(.,left_join(Long_clean,Testing_results)) %>%
+  filter(is.na(`Target density`)==F,
+         is.na(Target_genus)==F) %>%
+  left_join(.,Location_table) %>%
+  mutate(Month = as.numeric(substring(Date,6,7)),
+         Year = as.numeric(substring(Date,1,4))) %>%
+  mutate(Year = ifelse(Lifestage=="Adult"&Month<9,Year-1,Year))
 
 write.csv(summary_df,
           file = paste0(getwd(),'/Data/Regression_df/Regression_df_w_coinf.csv'))  

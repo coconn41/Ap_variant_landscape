@@ -6,7 +6,7 @@ library(readxl)
 # Load in and clean location table
 #####
 
-Location_table <- read_excel("Data/TL_data/Location_table_6_3.xlsx") %>%
+Location_table <- read_excel("Data/TL_data/Location_table_10_15.xlsx") %>%
   mutate(loc_latitude = ifelse(Location_ID==728,42.903655,loc_latitude)) %>%
   filter(is.na(loc_longitude)==F,
          is.na(loc_latitude)==F,
@@ -19,7 +19,7 @@ Location_table <- read_excel("Data/TL_data/Location_table_6_3.xlsx") %>%
   st_set_crs(4326) %>%
   st_transform(32618)
 
-Location_table_with_private = read_excel("Data/TL_data/Location_table_6_3.xlsx") %>%
+Location_table_with_private = read_excel("Data/TL_data/Location_table_10_15.xlsx") %>%
   mutate(loc_latitude = ifelse(Location_ID==728,42.903655,loc_latitude)) %>%
   filter(is.na(loc_longitude)==F,
          is.na(loc_latitude)==F) %>%

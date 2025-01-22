@@ -7,7 +7,7 @@ library(mgcv)
 library(spdep)
 library(glmmTMB)
 library(performance)
-library(moranfast)
+#library(moranfast)
 #####
 # Read in and separate data
 #####
@@ -16,8 +16,11 @@ if(remove_private==T){
   Regression_df <- read_csv("Data/Regression_df/Regression_df.csv")[,-1] %>%
     mutate(Site = as.factor(Site),
            UNIT = as.factor(UNIT),
+           Month = as.numeric(substring(Date,6,7)),
+           Day = as.numeric(substring(Date,9,10)),
            Year = as.numeric(substring(Date,1,4)),
            competition = ha - v1) %>%
+    mutate(Year = ifelse(Lifestage=="Adult"&Month<9,Year-1,Year)) %>%
     filter(is.na(latitude)==F) %>%
     group_by(Site,Lifestage,Year) %>%
     summarize(County = unique(County),
@@ -35,8 +38,11 @@ if(remove_private==F){
   Regression_df <- read_csv("Data/Regression_df/Regression_df_w_private.csv")[,-1] %>%
     mutate(Site = as.factor(Site),
            UNIT = as.factor(UNIT),
+           Month = as.numeric(substring(Date,6,7)),
+           Day = as.numeric(substring(Date,9,10)),
            Year = as.numeric(substring(Date,1,4)),
            competition = ha - v1) %>%
+    mutate(Year = ifelse(Lifestage=="Adult"&Month<9,Year-1,Year)) %>%
     filter(is.na(latitude)==F) %>%
     group_by(Site,Lifestage,Year) %>%
     summarize(County = unique(County),

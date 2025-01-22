@@ -43,27 +43,24 @@ adult_ha_ERI_mod = glmmTMB(formula = ERI ~ metric +
                               family = tweedie(link = 'log'),
                                data = Adult_ERI_df %>%
                              filter(name == "ha"))
-summary(adult_ha_ERI_mod)
-AIC(adult_ha_ERI_mod)
-
 adult_ha_ERI_mod2 = glmmTMB(formula = ERI ~ Landscape_metric + 
                              (1|UNIT) + (1|UNIT:Site),
                            family = tweedie(link = 'log'),
                            data = Adult_ERI_df %>%
                              filter(name == "ha"))
-summary(adult_ha_ERI_mod2)
-AIC(adult_ha_ERI_mod2)
-
 adult_ha_ERI_mod3 = glmmTMB(formula = ERI ~ metric + 
-                              (1|Site),
+                              (1|UNIT) + (1|UNIT:Site),
                             family = tweedie(link = 'log'),
                             data = Adult_ERI_df %>%
                               filter(name == "ha"))
-summary(adult_ha_ERI_mod3)
-AIC(adult_ha_ERI_mod3)
-
+AIC1 = AIC(adult_ha_ERI_mod)
+AIC2 = AIC(adult_ha_ERI_mod2)
+AIC3 = AIC(adult_ha_ERI_mod3)
+diff1 = AIC1-AIC2
+diff2 = AIC1-AIC3
+diff3 = AIC2-AIC3
 adult_ha_ERI_best = adult_ha_ERI_mod2
-
+summary(adult_ha_ERI_best)
 #####
 # Adult v1 ERI models
 #####
@@ -74,27 +71,24 @@ adult_v1_ERI_mod = glmmTMB(formula = ERI ~ metric +
                            family = tweedie(link = 'log'),
                            data = Adult_ERI_df %>%
                              filter(name == "v1"))
-summary(adult_ha_ERI_mod)
-AIC(adult_ha_ERI_mod)
-
 adult_v1_ERI_mod2 = glmmTMB(formula = ERI ~ Landscape_metric + 
                               (1|UNIT) + (1|UNIT:Site),
                             family = tweedie(link = 'log'),
                             data = Adult_ERI_df %>%
                               filter(name == "v1"))
-summary(adult_v1_ERI_mod2)
-AIC(adult_v1_ERI_mod2)
-
 adult_v1_ERI_mod3 = glmmTMB(formula = ERI ~ metric + 
-                              (1|Site),
+                              (1|UNIT)+(1|UNIT:Site),
                             family = tweedie(link = 'log'),
                             data = Adult_ERI_df %>%
                               filter(name == "v1"))
-summary(adult_v1_ERI_mod3)
-AIC(adult_v1_ERI_mod3)
-
-adult_v1_ERI_best = adult_v1_ERI_mod2
-
+AIC1 = AIC(adult_v1_ERI_mod)
+AIC2 = AIC(adult_v1_ERI_mod2)
+AIC3 = AIC(adult_v1_ERI_mod3)
+diff1 = AIC1-AIC2
+diff2 = AIC1-AIC3
+diff3 = AIC2-AIC3
+adult_v1_ERI_best = adult_v1_ERI_mod3 # Best picked here due to p not AIC
+summary(adult_v1_ERI_best)
 #####
 # Nymph ha ERI models
 #####
@@ -105,27 +99,24 @@ nymph_ha_ERI_mod = glmmTMB(formula = ERI ~ metric +
                            family = tweedie(link = 'log'),
                            data = Nymph_ERI_df %>%
                              filter(name == "ha"))
-summary(nymph_ha_ERI_mod)
-AIC(nymph_ha_ERI_mod)
-
 nymph_ha_ERI_mod2 = glmmTMB(formula = ERI ~ Landscape_metric + 
                               (1|UNIT) + (1|UNIT:Site),
                             family = tweedie(link = 'log'),
                             data = Nymph_ERI_df %>%
                               filter(name == "ha"))
-summary(nymph_ha_ERI_mod2)
-AIC(nymph_ha_ERI_mod2)
-
 nymph_ha_ERI_mod3 = glmmTMB(formula = ERI ~ metric + 
-                              (1|Site),
+                              (1|UNIT)+(1|UNIT:Site),
                             family = tweedie(link = 'log'),
                             data = Nymph_ERI_df %>%
                               filter(name == "ha"))
-summary(nymph_ha_ERI_mod3)
-AIC(nymph_ha_ERI_mod3)
-
-nymph_ha_ERI_best = nymph_ha_ERI_mod3
-
+AIC1 = AIC(nymph_ha_ERI_mod)
+AIC2 = AIC(nymph_ha_ERI_mod2)
+AIC3 = AIC(nymph_ha_ERI_mod3)
+diff1 = AIC1-AIC2
+diff2 = AIC1-AIC3
+diff3 = AIC2-AIC3
+nymph_ha_ERI_best = nymph_ha_ERI_mod2
+summary(nymph_ha_ERI_best)
 #####
 # Nymph v1 ERI models
 #####
@@ -136,27 +127,25 @@ nymph_v1_ERI_mod = glmmTMB(formula = ERI ~ metric +
                            family = tweedie(link = 'log'),
                            data = Nymph_ERI_df %>%
                              filter(name == "v1"))
-summary(nymph_v1_ERI_mod)
-AIC(nymph_v1_ERI_mod)
-
 nymph_v1_ERI_mod2 = glmmTMB(formula = ERI ~ Landscape_metric + 
                               (1|UNIT) + (1|UNIT:Site),
                             family = tweedie(link = 'log'),
                             data = Nymph_ERI_df %>%
                               filter(name == "v1"))
-summary(nymph_v1_ERI_mod2)
-AIC(nymph_v1_ERI_mod2)
-
 nymph_v1_ERI_mod3 = glmmTMB(formula = ERI ~ metric + 
-                              (1|Site),
+                              (1|UNIT)+(1|UNIT:Site),
                             family = tweedie(link = 'log'),
                             data = Nymph_ERI_df %>%
                               filter(name == "v1"))
-summary(nymph_v1_ERI_mod3)
-AIC(nymph_v1_ERI_mod3)
+AIC1 = AIC(nymph_v1_ERI_mod)
+AIC2 = AIC(nymph_v1_ERI_mod2)
+AIC3 = AIC(nymph_v1_ERI_mod3)
+diff1 = AIC1-AIC2
+diff2 = AIC1-AIC3
+diff3 = AIC2-AIC3
 
 nymph_v1_ERI_best = nymph_v1_ERI_mod3
-
+summary(nymph_v1_ERI_best)
 final_ERI_models = data.frame(Lifestage = c("Adult","Nymph","Adult","Nymph"),
                               parameter = c("Landscape","Patch","Landscape","Patch"),
                               Genotype = c("ha","ha","v1","v1"),

@@ -41,121 +41,63 @@ Nymph_density_df = Regression_df_w_density %>%
 #####
 # Adult density model
 #####
-
-adult_density_mod = lme4::lmer(formula = density ~ metric + 
+adult_density_mod = glmmTMB(formula = density ~ metric + 
+                             Landscape_metric +
+                             (1|UNIT) + (1|UNIT:Site),
+                           family = tweedie(link = 'log'),
+                           data = Adult_density_df)
+adult_density_mod2 = glmmTMB(formula = density ~ metric + 
+                             # Landscape_metric +
+                              (1|UNIT) + (1|UNIT:Site),
+                            family = tweedie(link = 'log'),
+                            data = Adult_density_df)
+adult_density_mod3 = glmmTMB(formula = density ~# metric + 
                               Landscape_metric +
                               (1|UNIT) + (1|UNIT:Site),
+                            family = tweedie(link = 'log'),
                             data = Adult_density_df)
-summary(adult_density_mod)
-AIC(adult_density_mod)
-
-adult_density_mod2 = lme4::lmer(formula = density ~ metric + 
-                                               (1|UNIT) + (1|UNIT:Site),
-                               data = Adult_density_df)
-summary(adult_density_mod2)
-AIC(adult_density_mod2)
-
-if(AIC(adult_density_mod)-AIC(adult_density_mod2)>2){adult_density_mod_best = adult_density_mod}
-if(AIC(adult_density_mod)-AIC(adult_density_mod2)<=2){adult_density_mod_best = adult_density_mod2}
+AIC1=AIC(adult_density_mod)
+AIC2=AIC(adult_density_mod2)
+AIC3=AIC(adult_density_mod3)
+diff1=AIC1-AIC2
+diff2=AIC1-AIC3
+diff3=AIC2-AIC3
+adult_density_mod_best = adult_density_mod3
 summary(adult_density_mod_best)
-
-Adult_density_df$residuals = abs(residuals(adult_density_mod_best))
-
-set.seed(1)
-ind = 0
-for(i in min(Adult_density_df$Year):max(Adult_density_df$Year)){
-  ind = ind + 1
-  df = Adult_density_df %>% 
-    mutate(Year = as.numeric(substring(Date,1,4)),
-           latitude = latitude+runif(n=n(),
-                                     min = -0.000001,
-                                     max = 0.000001),
-           longitude = longitude+runif(n=n(),
-                                     min = -0.000001,
-                                     max = 0.000001)) %>%
-    filter(Year == i)
-  try({res = moran.test(df$residuals,
-                        nb2listw(knn2nb(knearneigh(x = df %>%
-                                                     st_as_sf(.,
-                                                              coords=c('longitude',
-                                                                       'latitude'))))))})
-  if(ind==1){moran_df = data.frame(Lifestage = "Adult",
-                                   Year = i,
-                                   Moran_I = as.numeric(res$estimate[1]),
-                                   p_val = res$p.value)}
-  if(ind>1){moran_df2 = data.frame(Lifestage = "Adult",
-                                   Year = i,
-                                   Moran_I = as.numeric(res$estimate[1]),
-                                   p_val = res$p.value)
-  moran_df = rbind(moran_df2,moran_df)}
-}
-
 #####
 # Nymph density model
 #####
 
-
-nymph_density_mod = lme4::lmer(formula = density ~ metric + 
-                                 Landscape_metric +
-                                 (1|UNIT) + (1|UNIT:Site),
-                               data = Nymph_density_df)
-summary(nymph_density_mod)
-AIC(nymph_density_mod)
-
-nymph_density_mod2 = lme4::lmer(formula = density ~ metric + 
-                                 (1|UNIT) + (1|UNIT:Site),
-                               data = Nymph_density_df)
-summary(nymph_density_mod2)
-AIC(nymph_density_mod2)
-
-if(AIC(nymph_density_mod)-AIC(nymph_density_mod2)>2){nymph_density_mod_best = nymph_density_mod}
-if(AIC(nymph_density_mod)-AIC(nymph_density_mod2)<=2){nymph_density_mod_best = nymph_density_mod2}
+nymph_density_mod = glmmTMB(formula = density ~ metric + 
+                              Landscape_metric +
+                              (1|UNIT) + (1|UNIT:Site),
+                            family = tweedie(link = 'log'),
+                            data = Nymph_density_df)
+nymph_density_mod2 = glmmTMB(formula = density ~ metric + 
+                               # Landscape_metric +
+                               (1|UNIT) + (1|UNIT:Site),
+                             family = tweedie(link = 'log'),
+                             data = Nymph_density_df)
+nymph_density_mod3 = glmmTMB(formula = density ~# metric + 
+                               Landscape_metric +
+                               (1|UNIT) + (1|UNIT:Site),
+                             family = tweedie(link = 'log'),
+                             data = Nymph_density_df)
+AIC1=AIC(nymph_density_mod)
+AIC2=AIC(nymph_density_mod2)
+AIC3=AIC(nymph_density_mod3)
+diff1=AIC1-AIC2
+diff2=AIC1-AIC3
+diff3=AIC2-AIC3
+nymph_density_mod_best = nymph_density_mod3
 summary(nymph_density_mod_best)
 
-Nymph_density_df$residuals = abs(residuals(nymph_density_mod_best))
-
-set.seed(1)
-ind = 0
-for(i in min(Nymph_density_df$Year):max(Nymph_density_df$Year)){
-  ind = ind + 1
-  df = Nymph_density_df %>% 
-    mutate(Year = as.numeric(substring(Date,1,4)),
-           latitude = latitude+runif(n=n(),
-                                     min = -0.000001,
-                                     max = 0.000001),
-           longitude = longitude+runif(n=n(),
-                                       min = -0.000001,
-                                       max = 0.000001)) %>%
-    filter(Year == i)
-  try({res = moran.test(df$residuals,
-                        nb2listw(knn2nb(knearneigh(x = df %>%
-                                                     st_as_sf(.,
-                                                              coords=c('longitude',
-                                                                       'latitude'))))))})
-  if(ind==1){moran_df3 = data.frame(Lifestage = "Nymph",
-                                   Year = i,
-                                   Moran_I = as.numeric(res$estimate[1]),
-                                   p_val = res$p.value)}
-  if(ind>1){moran_df4 = data.frame(Lifestage = "Nymph",
-                                   Year = i,
-                                   Moran_I = as.numeric(res$estimate[1]),
-                                   p_val = res$p.value)
-  moran_df3 = rbind(moran_df3,moran_df4)}
-}
-
-morandf_fin = rbind(moran_df,moran_df3)
-morandf_fin$p_adjust = p.adjust(morandf_fin$p_val)
-
-final_scr_to_d_models = data.frame(Lifestage = c("Adult","Adult","Nymph","Nymph"),
-                          parameter = c("Patch","Landscape","Patch","Landscape"),
-                          Beta = c(summary(adult_density_mod_best)$coefficients[2],
-                                   summary(adult_density_mod_best)$coefficients[3],
-                                   summary(nymph_density_mod_best)$coefficients[2],
-                                   summary(nymph_density_mod_best)$coefficients[3]),
-                          T_val = c(summary(adult_density_mod_best)$coefficients[8],
-                                    summary(adult_density_mod_best)$coefficients[9],
-                                    summary(nymph_density_mod_best)$coefficients[8],
-                                    summary(nymph_density_mod_best)$coefficients[9]))
+final_scr_to_d_models = data.frame(Lifestage = c("Adult","Nymph"),
+                          parameter = c("Landscape","Landscape"),
+                          Beta = c(summary(adult_density_mod_best)$coefficients$cond[2],
+                                   summary(nymph_density_mod_best)$coefficients$cond[2]),
+                          P_val = c(summary(adult_density_mod_best)$coefficients$cond[8],
+                                    summary(nymph_density_mod_best)$coefficients$cond[8]))
 
 
 
