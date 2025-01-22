@@ -40,7 +40,7 @@ Fig2 = ggplot(data = Long_summary,
   scale_color_manual(name = "Genotype",
                      values = c("#E73428","#3B8BC2"))+
   facet_wrap(.~Target_stage)+
-  ylab("Weighted Prevalence") + 
+  ylab("Weighted Prevalence (%)") + 
   theme_bw()+
   theme(text = element_text(size=20));Fig2
 
